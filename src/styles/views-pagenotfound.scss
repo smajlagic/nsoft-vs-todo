@@ -1,0 +1,94 @@
+#page404 {
+    max-width: 370px;
+    margin: auto;
+    padding: 0px;
+    position: absolute;
+    top: 50%; 
+    left: 50%;
+    transform: translate(-50%,-50%);
+    display: flex;
+    flex-direction: column;
+    width: calc(100% - 40px);
+    
+    @media #{$responsive-mobile} {
+        left: 0px;
+        max-width: inherit;
+        padding-bottom: 128px;
+        padding-top: 128px;
+        position: relative;
+        top: 0px;
+        transform: translate(0%,0%);
+    }
+
+    img {
+        display: block;
+		height: auto;
+		margin: 0px auto;
+		margin-bottom: 57px;
+		max-width: 175px;
+        width: 100%;
+        
+        @media #{$responsive-mobile} {
+            margin-bottom: 36px;
+			max-width: 133px;
+        }
+    }
+
+    .input-field {
+		display: block; 
+		margin-bottom: 0px;
+		position: relative;
+        width: 100%;
+        
+        p {
+            display: flex;
+            flex-direction: column;
+            font-size: 13px;
+            padding: 1.05rem 1rem 0;
+            width: 100%;
+            text-align: center;
+
+            @media #{$responsive-mobile} {
+                font-size: 12px;
+			    padding: 13px 12px 14px 12px;
+            }
+
+            i {
+                color: #ccc;
+                font-size: 48px;
+                margin-bottom: 30px;
+            }
+        }
+    }
+    
+    .login-actions { 
+		display: flex; 
+		justify-content: center; 
+		align-items:  center; 
+		overflow: hidden;
+		padding-bottom:  34px;
+		padding-top:  16px;
+		position: relative;
+        width: 100%; 
+        
+        a { 
+            color: #cac5b3;
+            font-size: 13px;
+            font-weight: 600;
+            position: relative;
+            top: 1px;
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: border .25s ease-in-out;
+
+            &:hover {
+                border-bottom-color: #cac5b3;
+            }
+        }
+
+        @media #{$responsive-mobile} {
+            padding-bottom:  47px;
+			padding-top:  18px;
+        }
+	}
+}
