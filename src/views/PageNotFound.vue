@@ -15,7 +15,3 @@
         name: 'Password',
     }
 </script>
-
-<style lang="scss">
-	@import "../styles/views-pagenotfound.scss";
-</style>

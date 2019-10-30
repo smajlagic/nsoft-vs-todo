@@ -23,6 +23,8 @@
             }
         },
         mounted() {
+
+            
             
             if(!this.authenticated) {
                 // this.$router.replace({ name: "login" });
@@ -42,10 +44,8 @@
 </script>
 
 <style lang="scss">
-	@import "@/styles/_reset.scss";
-</style>
+    @import "@/styles/_reset.scss";
 
-<style>
     body {
         background-color: #fff;
     }
@@ -55,6 +55,17 @@
         margin: auto;
         width: 100%;
     }
+    
+    @import "@/styles/views-login.scss";
+    @import "@/styles/views-password.scss";
+    @import "@/styles/views-pagenotfound.scss";
+    @import "@/styles/views-secure.scss";
+    
+    
+
+</style>
+
+<style>
     
 
 </style>

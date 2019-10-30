@@ -1,11 +1,13 @@
 import Vue from 'vue'
+import Vuex from 'vuex'
 import Router from 'vue-router'
+import store from '../store'
 import LoginComponent from "../views/Login.vue"
 import SecureComponent from "../views/Secure.vue"
 import PasswordComponent from "../views/Password.vue"
 import PageNotFound from "../views/PageNotFound.vue"
 
-Vue.use(Router)
+Vue.use(Router, Vuex)
 
 const routes = [
   {
@@ -76,6 +78,7 @@ const routes = [
 
 const router = new Router({
   routes,
+  store,
   mode: 'history'
 })
 
@@ -115,6 +118,14 @@ router.beforeEach((to, from, next) => {
   .forEach(tag => document.head.appendChild(tag));
 
   next();
+
+
+  if (to.matched.some(record => record.meta.requiresLogin) && store.state.user.authenticated == false) {
+    store.commit("setGlobalError", "You need to log in before you can perform this action.")
+    next("/Login")
+  } else {
+      next()
+  }
 });
 
 export default router

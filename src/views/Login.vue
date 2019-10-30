@@ -97,7 +97,3 @@
         }
     }
 </script>
-
-<style lang="scss">
-	@import "@/styles/views-login.scss";
-</style>

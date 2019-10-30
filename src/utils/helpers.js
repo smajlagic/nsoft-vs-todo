@@ -51,6 +51,28 @@ export const generateList = (creator) => {
       }
     }
     return result
-    
+}
 
+
+
+export function makeItem (content, image, id = null) {
+  let randomId = Math.random().toString(36).substring(7)
+  id = id || randomId
+  return { id, content, image }
+}
+
+export function getItem (lists, itemRef, returnList) {
+  let list, item
+  const id = typeof itemRef === 'object'
+    ? itemRef.id
+    : itemRef
+  for (list of lists) {
+    item = list.items.find(item => item.id === id)
+    if (item) {
+      break
+    }
+  }
+  return returnList
+    ? { list, item }
+    : item
 }

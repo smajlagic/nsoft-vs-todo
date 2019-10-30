@@ -3,7 +3,7 @@
     <div id="secure" @click="detectAndCloseDropdown($event)">
         <header>
             <div class="header-inner inner-container">
-                <router-link to="/secure" class="logo"><img src="../assets/logo.png"></router-link>
+                <router-link to="/home" class="logo"><img src="../assets/logo.png"></router-link>
 
                 <div class="menu">
                     <label for="menu"><span>{{ local_user }}</span></label>
@@ -100,8 +100,6 @@
 <script>
     import { Container, Draggable } from 'vue-smooth-dnd'
     import { applyDrag, generateList, generateItems } from '../utils/helpers'
-    
-
     const columnNames = ['To-do list', 'Done']
 
     const scene = {
@@ -161,7 +159,7 @@
             unMarkDone(event, column, card) {
                 let column_id = column.replace('column','');
                 const scene = Object.assign({}, this.scene)
-                console.log(scene)
+                
                 const column_new = scene.children.filter(p => 1)[0]
                 
                 const column_length = column_new.children.length
@@ -169,7 +167,10 @@
                 
                 let todoId = scene.children.filter(p => column_id)[1].children.findIndex(({id}) => id == card);
                 const column_content = Object.assign({}, scene.children.filter(p => column_id)[1].children[todoId])
-                let column_new_id = '0'+column_length
+
+                let randomId = Math.random().toString(36).substring(7)
+
+                let column_new_id = randomId
                 
                 scene.children.filter(p => column_id)[1].children.splice(todoId, 1)
                 const undone_todo = { 
@@ -183,19 +184,21 @@
                     }
                 }
                 column_new.children.unshift(undone_todo)
-                localStorage.setItem('todos', JSON.stringify(scene));
+                localStorage.setItem('todos', JSON.stringify(scene))
                 this.scene = scene
+                // move store
+                this.$store.state.todobox.lists = JSON.stringify(scene)
+                
             },
             markDone(event, column, card) {
-                console.log('move');
-
                 let column_id = column.replace('column','');
                 const scene = Object.assign({}, this.scene)
                 const column_new = scene.children.filter(p => 1)[1]
                 const column_length = column_new.children.length
                 let todoId = scene.children.filter(p => column_id)[0].children.findIndex(({id}) => id == card);
                 const column_content = Object.assign({}, scene.children.filter(p => column_id)[0].children[todoId])
-                let column_new_id = '1'+column_length
+                let randomId = Math.random().toString(36).substring(7)
+                let column_new_id = randomId
                 scene.children.filter(p => column_id)[0].children.splice(todoId, 1)
                 
                 const done_todo = { 
@@ -210,7 +213,10 @@
                 }
                 column_new.children.unshift(done_todo)
                 localStorage.setItem('todos', JSON.stringify(scene));
+                
                 this.scene = scene
+                // move store
+                // store.state.todobox.lists = JSON.stringify(scene)
             },
             removeImage(event, column, card) {
                 event.preventDefault();
@@ -222,10 +228,10 @@
 
                 localStorage.setItem('todos', JSON.stringify(scene));
                 this.scene = scene
-
             },
             editTodo(event, column, card) {
                 event.preventDefault();
+                this.editing = true
 
                 const scene = Object.assign({}, this.scene)
                 let column_id = column.replace('column','');
@@ -235,9 +241,6 @@
 
                 localStorage.setItem('todos', JSON.stringify(scene));
                 this.scene = scene
-
-                this.editing = true
-
             },
             uploadImage(event) {
                 event.preventDefault();
@@ -246,7 +249,6 @@
                 const todo = element.getAttribute('data-card');
                 const scene = Object.assign({}, this.scene)
                 let column_id = element.getAttribute('data-column').replace('column','');
-                
                 
                 var reader = new FileReader();
                 var file = event.target.files[0];
@@ -260,16 +262,12 @@
 
                         this.scene = scene
                         localStorage.setItem('todos', JSON.stringify(scene));
-                        
 
                     } else {
                         alert('Browser doesnt support localStorage');
                     }
                 });
                 reader.readAsDataURL(event.target.files[0]);
-
-                console.log(scene)
-                
             },
             
             showTodoItemDrop (event) {
@@ -288,8 +286,7 @@
                 let column_id = column.replace('column','');
                 const scene = Object.assign({}, this.scene)
                 let todoId = scene.children.filter(p => column_id)[0].children.findIndex(({id}) => id == card);
-
-                                       
+                      
                 if(!event.shiftKey && event.target.value.replace(/\n$/,"") != "") {
                     event.preventDefault();
                     event.target.value.replace(/\n$/,"")
@@ -314,7 +311,6 @@
                 
                 localStorage.setItem('todos', JSON.stringify(scene));
                 this.scene = scene
-                
 
             },
             removeTodo(event, column, card) {
@@ -337,6 +333,7 @@
                 this.scene = scene
             },
             newTodo (event, columnId) {
+                this.editing = true
                 
                 let column_id = columnId.replace('column','');
                 const scene = Object.assign({}, this.scene)
@@ -357,14 +354,11 @@
                 column.children.unshift(blank_todo)
                 localStorage.setItem('todos', JSON.stringify(scene));
                 this.scene = scene
-                this.editing = true
             },
             onColumnDrop (dropResult) {
-                console.log(dropResult);
                 const scene = Object.assign({}, this.scene)
                 scene.children = applyDrag(scene.children, dropResult)
                 this.scene = scene
-                
             },
             onCardDrop (columnId, dropResult) {
                 
@@ -375,8 +369,9 @@
                     const newColumn = Object.assign({}, column)
                     newColumn.children = applyDrag(newColumn.children, dropResult)
                     scene.children.splice(columnIndex, 1, newColumn)
-                    this.scene = scene
+                    
                     localStorage.setItem('todos', JSON.stringify(scene));
+                    this.scene = scene
                 }
                 
             },
@@ -398,7 +393,3 @@
         
     }
 </script>
-
-<style lang="scss">
-	@import "../styles/views-secure.scss";
-</style>
