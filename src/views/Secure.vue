@@ -28,6 +28,7 @@
                     <span>{{ column.name }}</span>
                     <div v-if="column.id == 'column0'">
                         <button v-if="!editing" class="todo-action" @click="newTodo($event, column.id)"></button>
+
                     </div>
                     <div v-if="column.id == 'column1'">
                         <button v-if="!editing" class="done-action" @click="clearTodo($event, column.id)" :disabled="column.children.length < 1"><i class="fas fa-trash-alt"></i></button>
@@ -51,8 +52,11 @@
                 >
                     <Draggable v-for="card in column.children" :key="card.id">
                     <div :class="card.props.className" :style="card.props.style">
-                        <div class="card-item-header">
+                        <div class="todo-image" v-if="card.data.image">
+                            <img :src="card.data.image">
+                        </div>
 
+                        <div class="card-item-header">
                             <div><span v-if="!card.data.editing && !editing" class="card-drag-handle" title="Click and hold to move.">&#x2630;</span></div>
                             
                             <div class="todo-checkbox" v-if="!card.data.editing && !editing">
@@ -74,9 +78,7 @@
                                 </ul>
                             </div>
                         </div>
-                        <div class="todo-image">
-                            <img v-if="card.data.image" :src="card.data.image">
-                        </div>
+                        
                         <div class="todo-content" v-if="card.data.content && !card.data.editing">
                             <p>{{ card.data.content }}</p>
                         </div>
@@ -101,7 +103,7 @@
     import { Container, Draggable } from 'vue-smooth-dnd'
     import { applyDrag, generateList, generateItems } from '../utils/helpers'
     const columnNames = ['To-do list', 'Done']
-
+    
     const scene = {
         type: 'container',
         props: {
@@ -118,11 +120,20 @@
             children : generateList(i)
         }))
     }
-
     
     export default {
         name: 'Secret',
         components: {Container, Draggable},
+
+        props: {
+            listId: [String, Number],
+            placeholder: String,
+            icon: {
+            type: String,
+            default: 'angle-right'
+            }
+        },
+
         data () {
             return {
                 scene,
@@ -147,31 +158,21 @@
         methods: {
             detectAndCloseDropdown(event) {
                 let target = event.target;
-                
                 if (!target.classList.contains('todo-action') && !target.classList.contains('todo-action-child')) {
                     let other_elements = this.$el.querySelectorAll('.todo-action')
                     for (var i = 0; i < other_elements.length; i++) {
                         other_elements[i].classList.remove('is-active')
                     }
-                    
                 }
             },
             unMarkDone(event, column, card) {
                 let column_id = column.replace('column','');
                 const scene = Object.assign({}, this.scene)
-                
                 const column_new = scene.children.filter(p => 1)[0]
-                
-                const column_length = column_new.children.length
-                
-                
                 let todoId = scene.children.filter(p => column_id)[1].children.findIndex(({id}) => id == card);
                 const column_content = Object.assign({}, scene.children.filter(p => column_id)[1].children[todoId])
-
                 let randomId = Math.random().toString(36).substring(7)
-
                 let column_new_id = randomId
-                
                 scene.children.filter(p => column_id)[1].children.splice(todoId, 1)
                 const undone_todo = { 
                     id: column_new_id,
@@ -186,9 +187,6 @@
                 column_new.children.unshift(undone_todo)
                 localStorage.setItem('todos', JSON.stringify(scene))
                 this.scene = scene
-                // move store
-                this.$store.state.todobox.lists = JSON.stringify(scene)
-                
             },
             markDone(event, column, card) {
                 let column_id = column.replace('column','');
@@ -200,7 +198,6 @@
                 let randomId = Math.random().toString(36).substring(7)
                 let column_new_id = randomId
                 scene.children.filter(p => column_id)[0].children.splice(todoId, 1)
-                
                 const done_todo = { 
                     id: column_new_id,
                     type: 'draggable',
@@ -213,65 +210,54 @@
                 }
                 column_new.children.unshift(done_todo)
                 localStorage.setItem('todos', JSON.stringify(scene));
-                
                 this.scene = scene
-                // move store
-                // store.state.todobox.lists = JSON.stringify(scene)
             },
             removeImage(event, column, card) {
                 event.preventDefault();
                 const scene = Object.assign({}, this.scene)
                 let column_id = column.replace('column','');
-
                 let todoId = scene.children.filter(p => column_id)[0].children.findIndex(({id}) => id == card);
                 scene.children.filter(p => column_id)[0].children[todoId].data.image = '';
-
                 localStorage.setItem('todos', JSON.stringify(scene));
                 this.scene = scene
             },
             editTodo(event, column, card) {
                 event.preventDefault();
                 this.editing = true
-
                 const scene = Object.assign({}, this.scene)
                 let column_id = column.replace('column','');
-
                 let todoId = scene.children.filter(p => column_id)[0].children.findIndex(({id}) => id == card);
                 scene.children.filter(p => column_id)[0].children[todoId].data.editing = true;
-
                 localStorage.setItem('todos', JSON.stringify(scene));
                 this.scene = scene
             },
             uploadImage(event) {
                 event.preventDefault();
-
                 const element = event.target;
                 const todo = element.getAttribute('data-card');
                 const scene = Object.assign({}, this.scene)
                 let column_id = element.getAttribute('data-column').replace('column','');
-                
                 var reader = new FileReader();
                 var file = event.target.files[0];
                 var name = event.target.files[0].name;
+
+                reader.readAsDataURL(event.target.files[0]);
                 reader.addEventListener("load", function () {
+
+
                     if (this.result && localStorage && file.type.indexOf('image/') === 0) {
-                        
-                        
                         let todoId = scene.children.filter(p => column_id)[0].children.findIndex(({id}) => id == todo);
                         scene.children.filter(p => column_id)[0].children[todoId].data.image = this.result;
-
                         this.scene = scene
                         localStorage.setItem('todos', JSON.stringify(scene));
-
-                    } else {
-                        alert('Browser doesnt support localStorage');
-                    }
+                    } 
                 });
-                reader.readAsDataURL(event.target.files[0]);
-            },
-            
-            showTodoItemDrop (event) {
                 
+
+
+
+            },
+            showTodoItemDrop (event) {
                 let other_elements = this.$el.querySelectorAll('.todo-action')
                 for (var i = 0; i < other_elements.length; i++) {
                     other_elements[i].classList.remove('is-active')
@@ -285,8 +271,7 @@
             saveTodo (event, column, card) {
                 let column_id = column.replace('column','');
                 const scene = Object.assign({}, this.scene)
-                let todoId = scene.children.filter(p => column_id)[0].children.findIndex(({id}) => id == card);
-                      
+                let todoId = scene.children.filter(p => column_id)[0].children.findIndex(({id}) => id == card);  
                 if(!event.shiftKey && event.target.value.replace(/\n$/,"") != "") {
                     event.preventDefault();
                     event.target.value.replace(/\n$/,"")
@@ -294,19 +279,14 @@
                         scene.children.filter(p => column_id)[0].children[todoId].data.content = event.target.value;
                         this.editing = false
                         scene.children.filter(p => column_id)[0].children[todoId].data.editing = false
-                        
                     }
-                    
                 } else {
                     if(event.target.parentElement.querySelector('textarea').value) {
                         event.target.parentElement.querySelector('textarea').value.replace(/\n$/,"")
-                    
                         scene.children.filter(p => column_id)[0].children[todoId].data.content = event.target.parentElement.querySelector('textarea').value
                         this.editing = false
                         scene.children.filter(p => column_id)[0].children[todoId].data.editing = false
-                        
                     } 
-                    
                 }
                 
                 localStorage.setItem('todos', JSON.stringify(scene));
@@ -315,20 +295,16 @@
             },
             removeTodo(event, column, card) {
                 event.preventDefault();
-
                 let column_id = column.replace('column','');
                 const scene = Object.assign({}, this.scene)
                 scene.children.filter(p => column_id)[column_id].children.splice(scene.children.filter(p => column_id)[column_id].children.findIndex(({id}) => id == card), 1);
-
                 localStorage.setItem('todos', JSON.stringify(scene));
                 this.scene = scene
             },
             clearTodo (event, columnId) {
                 let column_id = columnId.replace('column','');
                 const scene = Object.assign({}, this.scene)
-                //const column = scene.children.filter(p => column_id)[1]
                 scene.children.filter(p => column_id)[1].children = []
-                
                 localStorage.setItem('todos', JSON.stringify(scene));
                 this.scene = scene
             },
@@ -350,7 +326,6 @@
                         editing: true,
                     }
                 }
-
                 column.children.unshift(blank_todo)
                 localStorage.setItem('todos', JSON.stringify(scene));
                 this.scene = scene
@@ -358,10 +333,10 @@
             onColumnDrop (dropResult) {
                 const scene = Object.assign({}, this.scene)
                 scene.children = applyDrag(scene.children, dropResult)
+                localStorage.setItem('todos', JSON.stringify(scene));
                 this.scene = scene
             },
             onCardDrop (columnId, dropResult) {
-                
                 if (dropResult.removedIndex !== null || dropResult.addedIndex !== null) {
                     const scene = Object.assign({}, this.scene)
                     const column = scene.children.filter(p => p.id === columnId)[0]
@@ -376,11 +351,9 @@
                 
             },
             getCardPayload (columnId) {
-                
                 return index => {
                     return this.scene.children.filter(p => p.id === columnId)[0].children[index]
                 }
-                
             },
             dragStart () {
                 // console.log('drag started')

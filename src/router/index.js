@@ -1,13 +1,11 @@
 import Vue from 'vue'
-import Vuex from 'vuex'
 import Router from 'vue-router'
-import store from '../store'
 import LoginComponent from "../views/Login.vue"
 import SecureComponent from "../views/Secure.vue"
 import PasswordComponent from "../views/Password.vue"
 import PageNotFound from "../views/PageNotFound.vue"
 
-Vue.use(Router, Vuex)
+Vue.use(Router)
 
 const routes = [
   {
@@ -73,15 +71,10 @@ const routes = [
   { path: "*", component: PageNotFound }
 ]
 
-
-
-
 const router = new Router({
   routes,
-  store,
   mode: 'history'
 })
-
 
 router.beforeEach((to, from, next) => {
   // This goes through the matched routes from last to first, finding the closest route with a title.
@@ -119,13 +112,6 @@ router.beforeEach((to, from, next) => {
 
   next();
 
-
-  if (to.matched.some(record => record.meta.requiresLogin) && store.state.user.authenticated == false) {
-    store.commit("setGlobalError", "You need to log in before you can perform this action.")
-    next("/Login")
-  } else {
-      next()
-  }
 });
 
 export default router

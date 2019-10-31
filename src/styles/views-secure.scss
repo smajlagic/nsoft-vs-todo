@@ -520,6 +520,7 @@
         border: 1px solid #fff;
         background-color: white;
         border-radius: 8px;
+        overflow: hidden;
         padding: 10px;
         padding-bottom: 20px;
 
@@ -666,9 +667,13 @@
                 
             }
         }
-
+        
         .todo-image {
             position: relative;
+            margin-bottom: -5px;
+            margin-top: -12px;
+            margin-left: -12px;
+            width: calc(100% + 22px);
         }
 
         textarea { 
