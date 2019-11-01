@@ -8,11 +8,7 @@ Each To do item have editable content with feature to upload an single image als
 
 There is very basic and simple HTTP Authentication system and password is shown when clicked on _Forget your password?_ link on login screen.
 
-Just in case here it is:
-
-email: nsoft@todo
-
-password: vahid
+Login email is __nsoft@todo__ and password is __vahid__
 
 
 This app uses [localStorage](https://en.wikipedia.org/wiki/Web_storage#Local_and_session_storage) to keep all data inside browser.
