@@ -1,15 +1,14 @@
 # nsoft-vs-todo
 
-As my first [Vue.js](https://vuejs.org/) and second experience with modern development tools such as [Node.js](https://nodejs.org/). This is the journey of an experienced, so-called "senior" developer, building out a Todobox app as responsive single page web application. 
+As my first [Vue.js](https://vuejs.org/) and second experience with modern development tools such as [Node.js](https://nodejs.org/) this is the journey of an experienced, so-called "senior" developer, building out a Todobox app as responsive single page web application. 
 
 ### Short description
-Todobox is limited to two lists _To do_ and _Done_. Once an To do item checked, it's moved to Done list and vice versa. Items are moveable through lists via Drag & Drop feature (note: it require a bit longer click delay).
-Each To do item have editable content with feature to upload an single image also remove it, in order to replace. Done items are not editable, but they can be moved back to To do list where become editable again. All items have option to remove but only Done list have option to delete all of them.
+Todobox is limited to two lists _To do_ and _Done_. Once when To do item checked, it will be moved to Done list and vice versa. Items are moveable throught lists via Drag & Drop feature (note: it require a bit longer click delay).
+Each To do item have editable content with feature to upload the single image and also to remove it, in order to replace or just remove. Done items are not editable, but they can be moved back to To do list where they become editable again. All items have option to remove but only Done list have option to delete all of them.
 
 There is very basic and simple HTTP Authentication system and password is shown when clicked on _Forget your password?_ link on login screen.
 
 Login email is __nsoft@todo__ and password is __vahid__
-
 
 This app uses [localStorage](https://en.wikipedia.org/wiki/Web_storage#Local_and_session_storage) to keep all data inside browser.
 
